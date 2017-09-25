@@ -15,8 +15,6 @@ void LED_Init(void)
 	GPIO_SetBits(GPIOC,GPIO_Pin_13);						 //PB.5 输出高
 	
 	
-
-	
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;				 //LED0-->PB.5 端口配置
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 		 //推挽输出
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		 //IO口速度为50MHz

@@ -6,6 +6,7 @@
 #include "can_speed.h"
 #include "includes.h"
 #include "taskconfig.h"
+#include "can_task.h"
 
 typedef enum {FAILED = 0, PASSED = !FAILED} TestStatus;
 
@@ -42,22 +43,22 @@ volatile TestStatus TestRx;
 {
   GPIO_InitTypeDef GPIO_InitStructure; 
   /* 复用功能和GPIOB端口时钟使能*/	 
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOB, ENABLE);	                        											 
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA, ENABLE);	                        											 
 
   /* CAN1 模块时钟使能 */
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE); 
 
-	GPIO_PinRemapConfig(GPIO_Remap1_CAN1, ENABLE);
+	//GPIO_PinRemapConfig(GPIO_Remap1_CAN1, ENABLE);
   /* Configure CAN pin: RX */	 
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8  ;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11  ;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;	 // 上拉输入
-  GPIO_Init(GPIOB, &GPIO_InitStructure);
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
   
   /* Configure CAN pin: TX */   
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; // 复用推挽输出
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOB, &GPIO_InitStructure);
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	//#define GPIO_Remap_CAN    GPIO_Remap1_CAN1 本实验没有用到重映射I/O
   // 
@@ -141,27 +142,9 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	
 		OS_ENTER_CRITICAL();
 	
-		RxMessage.StdId=0x00;
-		RxMessage.ExtId=0x00;
-		RxMessage.IDE=0;
-		RxMessage.DLC=0;
-		RxMessage.FMI=0;
-		memset(RxMessage.Data,0,8);  
+		memset(&RxMessage,0,sizeof(CanRxMsg));  
 		CAN_Receive(CAN1,CAN_FIFO0, &RxMessage); //接收FIFO0中的数据  
-	
-		if(RxMessage.IDE==CAN_ID_STD){
-				printf("receive std id =0x%x\r\n",RxMessage.StdId);
-				if(RxMessage.StdId==0x7e8){
-						resolve_obdii_speed(RxMessage.Data);
-					  set_system_status(OBDII);
-				}
-		}else{
-				printf("receive ext id =0x%x\r\n",RxMessage.ExtId);
-				if(RxMessage.ExtId ==0x00fe6c00){
-					  can_resolve_speed(RxMessage.Data,6);
-						set_system_status(SAE_1939);
-				}
-		}
+		resolve_can_message(&RxMessage);	
 		OS_EXIT_CRITICAL();				
 } 
 

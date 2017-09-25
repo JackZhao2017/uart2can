@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>strategy</TargetName>
+      <TargetName>canresolver_os</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
@@ -47,7 +47,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>..\OUTPUT\</OutputDirectory>
-          <OutputName>strategy</OutputName>
+          <OutputName>canresolver_os</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\FWLIB\inc;..\UCOSII\CONFIG;..\UCOSII\CORE;..\UCOSII\PORT;..\CORE;..\CMSIS;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\CAN;..\HARDWARE\LED;..\USER;..\HARDWARE\UART</IncludePath>
+              <IncludePath>..\FWLIB\inc;..\UCOSII\CONFIG;..\UCOSII\CORE;..\UCOSII\PORT;..\CORE;..\CMSIS;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\CAN;..\HARDWARE\LED;..\USER;..\HARDWARE\UART;..\SYSTEM\crc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -558,6 +558,11 @@
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\usart\usart.c</FilePath>
             </File>
+            <File>
+              <FileName>crc8.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SYSTEM\crc\crc8.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -614,19 +619,19 @@
               <FilePath>..\USER\can_speed.c</FilePath>
             </File>
             <File>
-              <FileName>can_obdii_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\USER\can_obdii_task.c</FilePath>
-            </File>
-            <File>
               <FileName>speed_send_task.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\USER\speed_send_task.c</FilePath>
             </File>
             <File>
-              <FileName>schedule_indicate_task.c</FileName>
+              <FileName>schedule_task.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\USER\schedule_indicate_task.c</FilePath>
+              <FilePath>..\USER\schedule_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>can_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\can_task.c</FilePath>
             </File>
           </Files>
         </Group>

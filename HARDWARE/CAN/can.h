@@ -20,9 +20,15 @@
 #define  ERR					-1
 
 typedef struct{
-		unsigned int CAN_ID;
-		unsigned int CAN_ID_MASK;
-		unsigned int CAN_ID_FMT;
+		volatile u8 cur_mode;
+		volatile u8 test_mode;
+		volatile u8 test_timeout;
+} CANBUS_MODE;
+
+typedef struct{
+		u32 CAN_ID;
+		u32 CAN_ID_MASK;
+		u32 CAN_ID_FMT;
 } FILTER;
 
 

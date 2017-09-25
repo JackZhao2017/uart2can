@@ -6,24 +6,25 @@
 #include "can.h"
 #include "string.h"
 #include "can_speed.h"
+#include "crc8.h"
 
 #define factor 1/256
 #define SPEED_FACTOR  0.05625
 static 	 u8 buf[]={0x55,0x30,0x6,0x8,0x55,0xc,0x0};
 static 	 u8 request_buf[]={0x02, 0x01 ,0x0D, 0x00, 0x00, 0x00, 0x00, 0x00};
-volatile u8 g_speed=0;
+volatile u16 g_speed=0;
 
-u8 get_can_speed(void)
+u16 get_can_speed(void)
 {
 		return g_speed;
 }
 
 void can_resolve_speed(u8 *buf,u8 idex)
 {
-		u8 speed;
-		speed=buf[idex];
+		u16 speed=g_speed;
+		speed=speed&0xff00;
+		speed|=buf[idex];
 		g_speed=speed;
-		printf(" g_speed =%d \r\n",g_speed);
 }
 
 s8 can_obdii_resolve_speed(u8 *buf)
@@ -58,22 +59,22 @@ s8 obdii_requeset(int pid)
 		 can_tx(OBDII_CMD_ID,CAN_ID_STD,request_buf,8);
 		 return 0;
 }
-void can_send_speed(u8 speed)
+void can_send_speed(u16 speed)
 {
-		float fspeed;
-		u16 t=0;
-	  fspeed=(float)speed/SPEED_FACTOR;
-		printf("can_send_speed %f\r\n",fspeed);
-    t=(u16)fspeed;
-    buf[1]=(t>>5)&0xff;
-    buf[2]=(t&0x1f)<<3;
-		can_tx(0x125,CAN_ID_STD,buf,8);
+		can_tx(0x125,CAN_ID_STD,buf,7);
 }
-void uart_send_speed(u8 speed)
+void uart_send_speed(u16 speed)
 {
-		USART2->DR=speed&0xff;
-		while((USART2->SR&0X40)==0);
-		printf("uart_send_speed %d\r\n",speed);
+		u8 i=0;
+		buf[0]=0x55;
+		buf[1]=0x04;
+		buf[2]=(speed>>8)&0xff;
+		buf[3]= speed&0xff;
+		buf[4]= crc8_creator(buf,1,3);
+		for(i=0;i<5;i++){
+				USART2->DR=buf[i];
+				while((USART2->SR&0X40)==0);
+	  }	
 }
 
 
