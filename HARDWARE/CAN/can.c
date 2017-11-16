@@ -127,7 +127,7 @@ void can_tx(u32 id ,u32 id_fmt,u8 *data,u8 len)
 		CanTxMsg TxMessage;  
 
 		TxMessage.StdId=id;	//标准标识符为0x00
-		TxMessage.ExtId=0x0000; //扩展标识符0x0000
+		TxMessage.ExtId=id; //扩展标识符0x0000
 		TxMessage.IDE=id_fmt;//使用标准标识符
 		TxMessage.RTR=CAN_RTR_DATA;//为数据帧
 		TxMessage.DLC=len;	//	消息的数据长度为2个字节

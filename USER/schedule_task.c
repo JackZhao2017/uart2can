@@ -47,6 +47,7 @@ void schedule_indicate_task(void *pdata)
 						g_speed&=0x00ff;
 				}else {
 						g_speed|=0xff00;
+						//printf("speed = 0x%x  \r\n",g_speed);
 				}		
 				
 				if(g_system_state>0){
@@ -76,7 +77,8 @@ void schedule_indicate_task(void *pdata)
 					LED1=0;
 					LED_OFF();
 				}
-				delay_ms(leddelay);
+				OSTimeDlyHMSM(0,0,0,10);
+				//delay_ms(leddelay);
 				++ledcount;
 		};
 }

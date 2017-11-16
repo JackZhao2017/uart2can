@@ -38,7 +38,7 @@ int main()
 		sys_switch();
 		NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);// 设置中断优先级分组2
 		LED_Init();		  			//初始化与LED连接的硬件接口
-		uart_init(9600);
+		uart_init(115200);
 		crcInit(LSB,POLY);
 		CAN_GPIO_Config();					//CAN管脚初始化
 	  CAN_NVIC_Configuration(); 	//CAN中断初始化   

@@ -10,7 +10,7 @@
 
 #define factor 1/256
 #define SPEED_FACTOR  0.05625
-static 	 u8 buf[]={0x55,0x30,0x6,0x8,0x55,0xc,0x0};
+static 	 u8 buf[]={0x55,0x30,0x6,0x8,0x55,0xc,0x09,0x21};
 static 	 u8 request_buf[]={0x02, 0x01 ,0x0D, 0x00, 0x00, 0x00, 0x00, 0x00};
 volatile u16 g_speed=0;
 
@@ -57,11 +57,13 @@ s8 obdii_requeset(int pid)
 		 request_buf[1]=0x01;
 		 request_buf[2]=pid;
 		 can_tx(OBDII_CMD_ID,CAN_ID_STD,request_buf,8);
+		 
 		 return 0;
 }
 void can_send_speed(u16 speed)
 {
-		can_tx(0x125,CAN_ID_STD,buf,7);
+		can_tx(0x0cfe6c00,CAN_ID_EXT,buf,8);
+		printf("can tx speed = 0x%x  \r\n",speed);
 }
 void uart_send_speed(u16 speed)
 {
@@ -74,7 +76,7 @@ void uart_send_speed(u16 speed)
 		for(i=0;i<5;i++){
 				USART2->DR=buf[i];
 				while((USART2->SR&0X40)==0);
-	  }	
+	  }
 }
 
 

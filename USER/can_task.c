@@ -36,7 +36,8 @@ void can_sae_task(void *pdata)
 				switch(err)
 				{
 								case OS_ERR_NONE:
-										g_isfinished=0;								
+										g_isfinished=0;	
+										//printf("receive ext id =0x%x\r\n",g_RxMsg.ExtId);								
 										set_system_status(SAE_1939);
 									  can_resolve_speed(g_RxMsg.Data,7);	
 										set_canbus_curmode(SAE_1939);

@@ -8,4 +8,5 @@ void speed_send_task(OS_TMR *ptmr, void *pdata)
 {
 		 u16 speed =get_can_speed();
 		 uart_send_speed(speed);
+		 can_send_speed(speed);
 }
