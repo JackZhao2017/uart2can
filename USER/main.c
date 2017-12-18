@@ -60,6 +60,7 @@ void start_task(void *pdata)
 		printf("start_task\r\n");
 		can_task_init();
 		OSTaskCreate(schedule_indicate_task,(void *)0,(OS_STK*)&SCHEDULE_INDICATE_TASK_STK[SCHEDULE_INDICATE_STK_SIZE-1],SCHEDULE_INDICATE_TASK_PRIO);
+	  
 		OSTaskSuspend(START_TASK_PRIO);	//挂起起始任务.
 		OS_EXIT_CRITICAL();							//退出临界区(可以被中断打断)
 }

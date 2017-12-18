@@ -35,7 +35,7 @@ void set_canbus_datamode(u8 mode)
 void schedule_indicate_task(void *pdata)
 {	 	
 		u8 	err;
-		u16  ledcount=0,leddelay=10;
+		u16  ledcount=0;
 		u8  led_on=1;
 		u8	scale=20;
 		u16 period=100;
@@ -47,7 +47,6 @@ void schedule_indicate_task(void *pdata)
 						g_speed&=0x00ff;
 				}else {
 						g_speed|=0xff00;
-						//printf("speed = 0x%x  \r\n",g_speed);
 				}		
 				
 				if(g_system_state>0){
@@ -78,7 +77,5 @@ void schedule_indicate_task(void *pdata)
 					LED_OFF();
 				}
 				OSTimeDlyHMSM(0,0,0,10);
-				//delay_ms(leddelay);
-				++ledcount;
 		};
 }
