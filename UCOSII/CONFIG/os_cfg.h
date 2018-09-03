@@ -32,14 +32,14 @@
 #define OS_CPU_HOOKS_EN           1u   /* uC/OS-II hooks are found in the processor port files         */
 
 #define OS_DEBUG_EN               0u   /* Enable(1) debug variables                                    */
-
+//#define OS_EVENT_NAME_SIZE				64
 #define OS_EVENT_MULTI_EN         0u   /* Include code for OSEventPendMulti()                          */
 #define OS_EVENT_NAME_EN          0u   /* Enable names for Sem, Mutex, Mbox and Q                      */
 
 #define OS_LOWEST_PRIO           63u   /* Defines the lowest priority that can be assigned ...         */
                                        /* ... MUST NEVER be higher than 254!                           */
 
-#define OS_MAX_EVENTS            10u   /* Max. number of event control blocks in your application      */
+#define OS_MAX_EVENTS            13u   /* Max. number of event control blocks in your application      */
 #define OS_MAX_FLAGS              5u   /* Max. number of Event Flag Groups    in your application      */
 #define OS_MAX_MEM_PART           0u   /* Max. number of memory partitions                             */
 #define OS_MAX_QS                 5u   /* Max. number of queue control blocks in your application      */
@@ -70,7 +70,7 @@
 #define OS_TASK_STAT_STK_CHK_EN   1u   /*     Check task stacks from statistic task                    */
 #define OS_TASK_SUSPEND_EN        1u   /*     Include code for OSTaskSuspend() and OSTaskResume()      */
 #define OS_TASK_SW_HOOK_EN        1u   /*     Include code for OSTaskSwHook()                          */
-
+//#define OS_TASK_NAME_SIZE					64
 
                                        /* ----------------------- EVENT FLAGS ------------------------ */
 #define OS_FLAG_EN                1u   /* Enable (1) or Disable (0) code generation for EVENT FLAGS    */
@@ -80,7 +80,7 @@
 #define OS_FLAG_QUERY_EN          1u   /*     Include code for OSFlagQuery()                           */
 #define OS_FLAG_WAIT_CLR_EN       1u   /* Include code for Wait on Clear EVENT FLAGS                   */
 #define OS_FLAGS_NBITS           16u   /* Size in #bits of OS_FLAGS data type (8, 16 or 32)            */
-
+//#define OS_FLAG_NAME_SIZE         64
 
                                        /* -------------------- MESSAGE MAILBOXES --------------------- */
 #define OS_MBOX_EN                1u   /* Enable (1) or Disable (0) code generation for MAILBOXES      */
@@ -96,7 +96,7 @@
 #define OS_MEM_EN                 1u   /* Enable (1) or Disable (0) code generation for MEMORY MANAGER */
 #define OS_MEM_NAME_EN            1u   /*     Enable memory partition names                            */
 #define OS_MEM_QUERY_EN           1u   /*     Include code for OSMemQuery()                            */
-
+#define OS_MEM_NAME_SIZE          64
 
                                        /* ---------------- MUTUAL EXCLUSION SEMAPHORES --------------- */
 #define OS_MUTEX_EN               1u   /* Enable (1) or Disable (0) code generation for MUTEX          */
@@ -139,7 +139,7 @@
 #define OS_TMR_CFG_NAME_EN        1u   /*     Determine timer names                                    */
 #define OS_TMR_CFG_WHEEL_SIZE     8u   /*     Size of timer wheel (#Spokes)                            */
 #define OS_TMR_CFG_TICKS_PER_SEC 100u   /*     Rate at which timer management task runs (Hz)            */
-#define OS_TASK_TMR_PRIO		  		8u	//软件定时器的优先级,设置为最高
+#define OS_TASK_TMR_PRIO		  		1u	//软件定时器的优先级,设置为最高
 
 #endif
 	 	   	  		 			 	    		   		 		 	 	 			 	    		   	 			 	  	 		 				 		  			 		 					 	  	  		      		  	   		      		  	 		 	      		   		 		  	 		 	      		  		  		  

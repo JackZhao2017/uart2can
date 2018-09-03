@@ -3,10 +3,8 @@
 #include "led.h"
 #include "stdio.h"
 #include "string.h"
-#include "can_speed.h"
 #include "includes.h"
-#include "taskconfig.h"
-#include "can_task.h"
+
 
 typedef enum {FAILED = 0, PASSED = !FAILED} TestStatus;
 
@@ -14,9 +12,9 @@ typedef enum {FAILED = 0, PASSED = !FAILED} TestStatus;
 __IO uint32_t ret = 0;
 
 volatile TestStatus TestRx;	
-
+extern void CAN_ResolveMsg(CanRxMsg *RxMessage);
 /*CAN RX0 中断优先级配置  */
- void CAN_NVIC_Configuration(void)
+ void CAN_NVIC_Configuration(uint8_t Priority ,uint8_t SubPriority,FunctionalState newstate)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
 
@@ -32,9 +30,9 @@ volatile TestStatus TestRx;
 
 	/* enabling interrupt */
   	NVIC_InitStructure.NVIC_IRQChannel=USB_LP_CAN1_RX0_IRQn;;
-  	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = Priority;
+  	NVIC_InitStructure.NVIC_IRQChannelSubPriority = SubPriority;
+  	NVIC_InitStructure.NVIC_IRQChannelCmd = newstate;
   	NVIC_Init(&NVIC_InitStructure);
 }
 
@@ -65,7 +63,7 @@ volatile TestStatus TestRx;
 }
 
 /*	CAN初始化 */
- void CAN_INIT(int baudrate)
+void CAN_INIT(BAUDRATE baudrate)
 {
   CAN_InitTypeDef        CAN_InitStructure;
 
@@ -81,71 +79,92 @@ volatile TestStatus TestRx;
   CAN_InitStructure.CAN_RFLM=DISABLE;//没有使能接收FIFO锁定模式
   CAN_InitStructure.CAN_TXFP=DISABLE;//没有使能发送FIFO优先级
   CAN_InitStructure.CAN_Mode=CAN_Mode_Normal;//CAN设置为正常模式
-  CAN_InitStructure.CAN_SJW=CAN_SJW_1tq; //重新同步跳跃宽度1个时间单位
-  CAN_InitStructure.CAN_BS1=CAN_BS1_3tq; //时间段1为3个时间单位
-  CAN_InitStructure.CAN_BS2=CAN_BS2_2tq; //时间段2为2个时间单位
-  CAN_InitStructure.CAN_Prescaler=baudrate;  //时间单位长度为60	
+  CAN_InitStructure.CAN_SJW=baudrate.CAN_SJW; //重新同步跳跃宽度1个时间单位
+  CAN_InitStructure.CAN_BS1=baudrate.CAN_BS1; //时间段1为3个时间单位
+  CAN_InitStructure.CAN_BS2=baudrate.CAN_BS2; //时间段2为2个时间单位
+  CAN_InitStructure.CAN_Prescaler=baudrate.CAN_Prescaler;  //时间单位长度为60	
   CAN_Init(CAN1,&CAN_InitStructure);
                                       //波特率为：72M/2/60(1+3+2)=0.1 即100K
   /* CAN FIFO0 message pending interrupt enable */ 
 	CAN_ITConfig(CAN1,CAN_IT_FMP0, ENABLE); //使能FIFO0消息挂号中断
+	printf("%s CAN_SJW :%d CAN_BS1:%d CAN_BS2 :%d  CAN_Prescaler:%d \r\n",__func__,baudrate.CAN_SJW,baudrate.CAN_BS1, baudrate.CAN_BS2,baudrate.CAN_Prescaler);
  
  }  
 
  
-void CAN_FILTERINIT(FILTER *filter,int len)
+void CAN_FILTERINIT(FILTER *filter,uint8_t len)
 {
-		int i=0;
-		unsigned int filterId;
-		unsigned int filterMaskId;
-		CAN_FilterInitTypeDef  CAN_FilterInitStructure; 
-	  /* CAN filter init */
-		for(i=0;i<len;i++){
-			filterId=filter[i].CAN_ID<<(32-filter[i].CAN_ID_FMT);
-			filterMaskId=filter[i].CAN_ID_MASK<<(32-filter[i].CAN_ID_FMT);
-			CAN_FilterInitStructure.CAN_FilterNumber=i;//指定过滤器为1
-			CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdMask;//指定过滤器为标识符屏蔽位模式
-			CAN_FilterInitStructure.CAN_FilterScale=CAN_FilterScale_32bit;//过滤器位宽为32位
-			CAN_FilterInitStructure.CAN_FilterIdHigh=(filterId>>16)&0xffff;// 过滤器标识符的高16位值
-			if(filter[i].CAN_ID_FMT==EXT){
-					CAN_FilterInitStructure.CAN_FilterIdLow=(filterId&0xffff)|CAN_ID_EXT;//	 过滤器标识符的低16位值
-			}else{
-					CAN_FilterInitStructure.CAN_FilterIdLow=filterId&0xffff;
-			}
-			CAN_FilterInitStructure.CAN_FilterMaskIdHigh=(filterMaskId>>16)&0xffff;//过滤器屏蔽标识符的高16位值
-			CAN_FilterInitStructure.CAN_FilterMaskIdLow=(filterMaskId&0xffff)|0x6;//	过滤器屏蔽标识符的低16位值
-			CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_FIFO0;// 设定了指向过滤器的FIFO为0
-			CAN_FilterInitStructure.CAN_FilterActivation=ENABLE;// 使能过滤器
-			CAN_FilterInit(&CAN_FilterInitStructure);//	按上面的参数初始化过滤器
-			printf("idh 	=0x%4x idl 	= 0x%04x\r\n",CAN_FilterInitStructure.CAN_FilterIdHigh,CAN_FilterInitStructure.CAN_FilterIdLow);
-			printf("idMh 	=0x%4x idMl = 0x%04x\r\n",CAN_FilterInitStructure.CAN_FilterMaskIdHigh,CAN_FilterInitStructure.CAN_FilterMaskIdLow);
+	int i=0;
+	unsigned int filterId;
+	unsigned int filterMaskId;
+	CAN_FilterInitTypeDef  CAN_FilterInitStructure; 
+  /* CAN filter init */
+	for(i=0;i<len;i++){
+		filterId=filter[i].CAN_ID<<(32-filter[i].CAN_ID_FMT);
+		filterMaskId=filter[i].CAN_ID_MASK<<(32-filter[i].CAN_ID_FMT);
+		CAN_FilterInitStructure.CAN_FilterNumber=i;//指定过滤器为1
+		CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdMask;//指定过滤器为标识符屏蔽位模式
+		CAN_FilterInitStructure.CAN_FilterScale=CAN_FilterScale_32bit;//过滤器位宽为32位
+		CAN_FilterInitStructure.CAN_FilterIdHigh=(filterId>>16)&0xffff;// 过滤器标识符的高16位值
+		if(filter[i].CAN_ID_FMT==EXT){
+				CAN_FilterInitStructure.CAN_FilterIdLow=(filterId&0xffff)|CAN_ID_EXT;//	 过滤器标识符的低16位值
+		}else{
+				CAN_FilterInitStructure.CAN_FilterIdLow=filterId&0xffff;
 		}
+		CAN_FilterInitStructure.CAN_FilterMaskIdHigh=(filterMaskId>>16)&0xffff;//过滤器屏蔽标识符的高16位值
+		CAN_FilterInitStructure.CAN_FilterMaskIdLow=(filterMaskId&0xffff)|0x6;//	过滤器屏蔽标识符的低16位值
+		CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_FIFO0;// 设定了指向过滤器的FIFO为0
+		CAN_FilterInitStructure.CAN_FilterActivation=ENABLE;// 使能过滤器
+		CAN_FilterInit(&CAN_FilterInitStructure);//	按上面的参数初始化过滤器
+		printf("idh 	=0x%4x idl 	= 0x%04x\r\n",CAN_FilterInitStructure.CAN_FilterIdHigh,CAN_FilterInitStructure.CAN_FilterIdLow);
+		printf("idMh 	=0x%4x idMl = 0x%04x\r\n",CAN_FilterInitStructure.CAN_FilterMaskIdHigh,CAN_FilterInitStructure.CAN_FilterMaskIdLow);
+	}
 }
 
 void can_tx(u32 id ,u32 id_fmt,u8 *data,u8 len)
 { 
-		CanTxMsg TxMessage;  
+	CanTxMsg TxMessage;  
 
-		TxMessage.StdId=id;	//标准标识符为0x00
-		TxMessage.ExtId=id; //扩展标识符0x0000
-		TxMessage.IDE=id_fmt;//使用标准标识符
-		TxMessage.RTR=CAN_RTR_DATA;//为数据帧
-		TxMessage.DLC=len;	//	消息的数据长度为2个字节
-		memcpy(TxMessage.Data,data,len);
-		CAN_Transmit(CAN1,&TxMessage); //发送数据 
+	TxMessage.StdId=id;	//标准标识符为0x00
+	TxMessage.ExtId=id; //扩展标识符0x0000
+	TxMessage.IDE=id_fmt;//使用标准标识符
+	TxMessage.RTR=CAN_RTR_DATA;//为数据帧
+	TxMessage.DLC=len;	//	消息的数据长度为2个字节
+	memcpy(TxMessage.Data,data,len);
+	CAN_Transmit(CAN1,&TxMessage); //发送数据 
 }
+
+void CAN_TRANSMIT(CanTxMsg *TxMessage)
+{
+	CanTxMsg Message;
+	if(TxMessage->IDE==1){
+		Message.StdId=TxMessage->StdId;	//标准标识符为0x00
+		Message.ExtId=TxMessage->ExtId; //扩展标识符0x0000
+		Message.IDE=CAN_ID_EXT;//使用标准标识符
+		Message.RTR=TxMessage->RTR;//为数据帧
+		Message.DLC=TxMessage->DLC;	//	消息的数据长度为2个字节
+		memcpy(Message.Data,TxMessage->Data,TxMessage->DLC);
+		CAN_Transmit(CAN1,&Message); //发送数据
+	}else if(TxMessage->IDE==0){
+		Message.StdId=TxMessage->StdId;	//标准标识符为0x00
+		Message.ExtId=TxMessage->ExtId; //扩展标识符0x0000
+		Message.IDE=CAN_ID_STD;//使用标准标识符
+		Message.RTR=TxMessage->RTR;//为数据帧
+		Message.DLC=TxMessage->DLC;	//	消息的数据长度为2个字节
+		memcpy(Message.Data,TxMessage->Data,TxMessage->DLC);
+		CAN_Transmit(CAN1,&Message); //发送数据
+	}
+}
+
 /* USB中断和CAN接收中断服务程序，USB跟CAN公用I/O，这里只用到CAN的中断。 */
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
-		OS_CPU_SR cpu_sr=0;	
-		CanRxMsg RxMessage;
-	
-		OS_ENTER_CRITICAL();
-	
-		memset(&RxMessage,0,sizeof(CanRxMsg));  
-		CAN_Receive(CAN1,CAN_FIFO0, &RxMessage); //接收FIFO0中的数据  
-		resolve_can_message(&RxMessage);	
-		OS_EXIT_CRITICAL();				
+	OS_CPU_SR cpu_sr=0;	
+	CanRxMsg RxMessage;	
+	OS_ENTER_CRITICAL();
+	CAN_Receive(CAN1,CAN_FIFO0, &RxMessage); //接收FIFO0中的数据  
+	CAN_ResolveMsg(&RxMessage);	
+	OS_EXIT_CRITICAL();				
 } 
 
 

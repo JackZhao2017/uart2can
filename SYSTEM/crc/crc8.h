@@ -100,9 +100,9 @@ void crc8_populate_msb(unsigned char  table[CRC8_TABLE_SIZE], unsigned char  pol
  * Williams, Ross N., ross<at>ross.net
  * (see URL http://www.ross.net/crc/download/crc_v3.txt).
  */
-unsigned  char crc8(unsigned  char  *pdata, unsigned int  nbytes, unsigned  char crc);
+unsigned  char crc8(unsigned  char  *pdata, unsigned char  nbytes, unsigned  char crc);
 
-void crcInit(int type, int poly);
-int crc8_creator(unsigned char  *m,int start,int len);
-
+void crcInit(unsigned char type, unsigned char poly);
+unsigned char crc8_creator(unsigned char  *m,unsigned char start,unsigned char len);
+unsigned char crc8_detector(unsigned char  *m,unsigned char start,unsigned char len);
 #endif /* __CRC8_H_ */

@@ -20,5 +20,5 @@ typedef struct {
 void cmd_queue_init(CMD_QUEUE_INFO *info,uint8_t size);
 char put_cmd_queue(CMD_QUEUE_INFO *info,uint8_t *data);
 char get_cmd_queue(CMD_QUEUE_INFO *info,uint8_t *data);
-
+void clean_cmd_queue(CMD_QUEUE_INFO *info);
 #endif

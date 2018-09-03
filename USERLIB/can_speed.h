@@ -7,19 +7,15 @@
 #define VAILD 	1
 #define INVAILD 0
 
-void uart_send_speed(u16 speed);
+void SPEED_UartSend(u16 speed);
+void SPEED_CanSend(u16 speed);
+void SPEED_SAE1939_Resolve(u8 *buf,u8 idex);
+s8   SPEED_OBDII_Resolve(u8 *buf);
+s8   SPEED_OBDII_Requeset(int pid);
 
-void can_send_speed(u16 speed);
+u16  SPEED_GetCanSpeed(void);
 
-void can_resolve_speed(u8 *buf,u8 idex);
-
-s8 can_obdii_resolve_speed(u8 *buf);
-
-s8 obdii_requeset(int pid);
-
-u16 get_can_speed(void);
-
-void set_canbus_status(u8 mode);
-u8   get_canbus_status(void);
+void SPEED_SetCanBusStatus(u8 mode);
+u8   SPEED_GetCanBusStatus(void);
 
 #endif

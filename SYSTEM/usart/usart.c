@@ -5,18 +5,7 @@
 #if SYSTEM_SUPPORT_OS
 #include "includes.h"					//ucos 使用	  
 #endif
-//////////////////////////////////////////////////////////////////////////////////	 
-//本程序只供学习使用，未经作者许可，不得用于其它任何用途
-//ALIENTEK STM32开发板
-//串口1初始化		   
-//正点原子@ALIENTEK
-//技术论坛:www.openedv.com
-//修改日期:2012/8/18
-//版本：V1.5
-//版权所有，盗版必究。
-//Copyright(C) 广州市星翼电子科技有限公司 2009-2019
-//All rights reserved
-//********************************************************************************
+
 //V1.3修改说明 
 //支持适应不同频率下的串口波特率设置.
 //加入了对printf的支持
@@ -70,7 +59,7 @@ u8 USART_RX_BUF[USART_REC_LEN];     //接收缓冲,最大USART_REC_LEN个字节.
 //bit13~0，	接收到的有效字节数目
 u16 USART_RX_STA=0;       //接收状态标记	  
   
-void uart_init(u32 bound){
+void UART_Init(u32 bound,u8 irqPriority,u8 irqSubPriority){
   //GPIO端口设置
   GPIO_InitTypeDef GPIO_InitStructure;
 	USART_InitTypeDef USART_InitStructure;
@@ -91,8 +80,8 @@ void uart_init(u32 bound){
 
   //Usart1 NVIC 配置
   NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=3 ;//抢占优先级3
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;		//子优先级3
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=irqPriority ;//抢占优先级3
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = irqSubPriority;		//子优先级3
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据指定的参数初始化VIC寄存器
   
