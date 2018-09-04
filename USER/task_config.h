@@ -15,7 +15,7 @@
 #define CHK_STK_SIZE                  96
 #define CHK_STK_PRIO                  15
 
-#define CAN_READ_PRIO				   9 
+#define CAN_READ_PRIO				   7 
 #define CAN_READ_STK_SIZE			  64
 
 #define CAN_SEND_PRIO				  8
@@ -28,7 +28,7 @@
 
 
 #define READ_TASK_PRIO       		  11 	//设置任务优先级
-#define SEND_TASK_PRIO       		  7 	//设置任务优先级
+#define SEND_TASK_PRIO       		  9 	//设置任务优先级
 #define PARSE_TASK_PRIO               10
 
 #define SEND_STK_SIZE  		    	  96 	//设置任务堆栈大小
