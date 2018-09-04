@@ -73,14 +73,14 @@ void UARTParse_TaskInit(void)
 	g_sem_parse=OSSemCreate(0);
 	Ringbuffer_Init(&g_ringInfo,receivebuf,sizeof(receivebuf));
 	OSTaskCreateExt(uart_parse_task,
-									(void *)0,
-									(OS_STK *)&UART_PARSE_TASK_STK[PARSE_STK_SIZE-1],
-									PARSE_TASK_PRIO,
-									id_parse,
-									(OS_STK *)&UART_PARSE_TASK_STK[0],
-									 PARSE_STK_SIZE,
-									(void *)0,
-									OS_TASK_OPT_STK_CHK
+					(void *)0,
+					(OS_STK *)&UART_PARSE_TASK_STK[PARSE_STK_SIZE-1],
+					PARSE_TASK_PRIO,
+					id_parse,
+					(OS_STK *)&UART_PARSE_TASK_STK[0],
+					 PARSE_STK_SIZE,
+					(void *)0,
+					OS_TASK_OPT_STK_CHK
 				); 
 	printf("%s \r\n",__func__);
 }

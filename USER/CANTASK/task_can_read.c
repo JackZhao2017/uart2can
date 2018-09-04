@@ -42,19 +42,8 @@ static void canreadTask(void *pdata)
 		switch(err)
 		{
 			case OS_ERR_NONE:
-
-				if((g_RxMsg.ExtId&0xffff00)==0xfe6c00)
-				{
-					SPEED_SAE1939_Resolve(g_RxMsg.Data,7);
-					SPEED_SetCanBusStatus(VAILD);
-				}
-				else if((g_RxMsg.ExtId&0xffff00)==0xfef100)
-				{
-					SPEED_SAE1939_Resolve(g_RxMsg.Data,2);
-					SPEED_SetCanBusStatus(VAILD);
-				}else{						
-					CAN_QueueReadPut(&CAN_QUEUE_INFO,&g_RxMsg);
-				}
+				SPEED_SetCanBusStatus(VAILD);					
+				CAN_QueueReadPut(&CAN_QUEUE_INFO,&g_RxMsg);
 				g_isfinished=1;
 				SCHEDULE_SetSystemStatus(1);																				
 				break;
@@ -108,7 +97,7 @@ uint8_t CAN_ReadTaskPause(void)
 	}
 	g_canread_status=0;
 
-	 return 1;
+	return 1;
 }
 
 

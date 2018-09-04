@@ -12,7 +12,7 @@ typedef struct _queue_read_info{
 }QUEUE_READ_INFO;
 
 
-#define READ_QUEUE_SIZE 8
+#define READ_QUEUE_SIZE 20
 
 void    CAN_QueueReadInit(QUEUE_READ_INFO *info,int size);
 

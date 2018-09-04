@@ -14,9 +14,9 @@
 #define SPEED_FACTOR  0.05625
 static 	 u8 buf[]={0x55,0x30,0x6,0x8,0x55,0xc,0x09,0x46};
 static 	 u8 request_buf[]={0x02, 0x01 ,0x0D, 0x00, 0x00, 0x00, 0x00, 0x00};
-volatile u16 g_speed=60;
+static u16 g_speed=60;
 
-volatile  u8 g_isvaild=INVAILD;
+static u8 g_isvaild=INVAILD;
 
 void SPEED_SetCanBusStatus(u8 mode)
 {

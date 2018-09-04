@@ -41,27 +41,14 @@ static void uart_send_task(void *pdata)
 {
 	INT8U err;
 	UartTxMsg usrtmsg;
-	u16 speed=0;
-	u8 valid=0;	 
-
 	printf("uart_send_task inited 1\r\n");
-
 	uart_send_status=1;
 	while(1)
 	{
-		OSSemPend(g_sem_send,50,&err);
+		OSSemPend(g_sem_send,0,&err);
 
 		if(UART_ENCODE_GetSend(&usrtmsg)){			      
 			UART_SEND_DATA((char *)&usrtmsg,usrtmsg.TYPE+1);
-		}else{
-			speed=SPEED_GetCanSpeed();
-			valid=SPEED_GetCanBusStatus();
-			if(valid){
-				speed&=0x00ff;
-			}else{
-				speed|=0xff00;
-			}
-			SPEED_UartSend(speed);	
 		}
 		g_send_finished=1;
 	}
@@ -101,10 +88,9 @@ uint8_t UARTSend_TaskStart(void)
 	err = OSTaskResume(SEND_TASK_PRIO);
 
 	while(err){
-		printf("%s err =%d \r\n",__func__,err);
 		err = OSTaskResume(SEND_TASK_PRIO);
 		if(++count==5){
-				return 0;
+			return 0;
 		}
 	}
 

@@ -15,7 +15,17 @@
 #include "can_queue_send.h"
 
 
-FILTER default_filter[2]={{0x0cfe6c00,0x00FFFF00,EXT},{0x0cfef100,0x00FFFF00,EXT}};
+FILTER default_filter[]={
+						{0x0cfe6c00,0x00FFFF00,EXT},//7、8字节为转速计输出车速。
+						{0x0cfef100,0x00FFFF00,EXT},//2、3字节为基于车轮的车速。
+						{0x00f00000,0x00FFFF00,EXT},//减速器控制器;
+						{0x00f00300,0x00FFFF00,EXT},//2字节 AP加速踏板位置。
+						{0x00f00400,0x00FFFF00,EXT},//发动机、减速器模式
+						{0x00f00100,0x00FFFF00,EXT},//刹车踏板位置
+						{0x00fE6f00,0x00FFFF00,EXT},//可适应巡航速度
+						{0x00fEC200,0x00FFFF00,EXT},//电子控制器输出状态
+						{0x00fEFA00,0x00FFFF00,EXT},//电子控制器输出状态
+					};
 
 static	uint8_t g_CAN_Prescaler=0;
 extern	QUEUE_READ_INFO CAN_QUEUE_INFO;
@@ -47,9 +57,9 @@ void CAN_TaskInit(BAUDRATE brandrate)
 	g_CAN_Prescaler=brandrate.CAN_Prescaler;
 
 	CAN_INIT(brandrate);
-	CAN_FILTERINIT(default_filter,2);	
+	CAN_FILTERINIT(default_filter,9);	
 
-	CAN_SendTaskInit();
+	//CAN_SendTaskInit();
 	CAN_ReadTaskInit();
 
 	printf("can_task_init\r\n");

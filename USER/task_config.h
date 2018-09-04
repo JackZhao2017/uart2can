@@ -19,7 +19,7 @@
 #define CAN_READ_STK_SIZE			  64
 
 #define CAN_SEND_PRIO				  8
-#define CAN_SEND_STK_SIZE			  128
+#define CAN_SEND_STK_SIZE			  0
 
 #define CAN_MUTEX_PRIO                3
 #define UART_MUTEX_PRIO               5

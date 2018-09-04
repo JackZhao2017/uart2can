@@ -12,7 +12,7 @@
 OS_STK 	 CAN_SEND_TASK_STK[CAN_SEND_STK_SIZE];
 static 	 OS_EVENT *g_sem_cansend;
 static   volatile u8  g_cansend_status=0;
-volatile u8 g_istxfinished=1;
+volatile u8 g_istxfinished=0;
 QUEUE_SEND_INFO CAN_SEND_INFO;
 
 
@@ -92,7 +92,6 @@ uint8_t CAN_SendTaskPause(void)
 		}
 	}
 	g_cansend_status=0;
-
 	return 1;
 }	
 

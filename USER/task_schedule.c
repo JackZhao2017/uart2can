@@ -66,14 +66,14 @@ void schedule_indicate_task(void *pdata)
 	{							
 		displaystatus();;
 		if((g_system_state<=0)&&KEYACC_Scan()){
-			if(++count==300){
+			if(++count==30){
 				count=0;
 				entry_sleep_mode();
 			}
 		}else{
 			count=0;
 		}
-		OSTimeDlyHMSM(0,0,0,100);			
+		OSTimeDlyHMSM(0,0,1,0);			
 	}
 }
 void SCHEDULE_TaskInit(void)
